@@ -2,7 +2,7 @@
 
 ## 1. Descripción
 
-Este manual explica el procedimiento necesario para ejecutar y comprobar el funcionamiento del proyecto desarrollado para la práctica de Seguridad Informática. El entorno implementado utiliza Flask para la aplicación web y SQLite para el almacenamiento de los usuarios, además incorpora pruebas controladas de autenticación, SQL Injection y escaneo de puertos.
+Este manual explica el procedimiento necesario para ejecutar y comprobar el funcionamiento del proyecto desarrollado para la práctica de Seguridad Informática. El entorno implementado utiliza Flask para la aplicación web y SQLite para el almacenamiento de los usuarios, además incorpora pruebas controladas de autenticación, SQL Injection, mitigación de la vulnerabilidad y escaneo de puertos.
 
 Las pruebas se realizan únicamente sobre el equipo local mediante la dirección `127.0.0.1`, de modo que las actividades de análisis se mantienen dentro del entorno preparado para la práctica académica.
 
@@ -26,11 +26,14 @@ Los archivos se encuentran organizados dentro de la carpeta principal del proyec
 ```text
 Practica seguridad sqli/
 ├── app_vulnerable.py
+├── app_segura.py
 ├── ataque_sql_i.py
+├── pruebas_app_segura.py
 ├── escaneo_red.py
 ├── usuarios.db
 ├── templates/
-│   └── inicio_sesion.html
+│   ├── inicio_sesion.html
+│   └── inicio_sesion_segura.html
 ├── static/
 │   └── estilos.css
 ├── evidencias/
@@ -38,9 +41,9 @@ Practica seguridad sqli/
 └── README.md
 ```
 
-El archivo `app_vulnerable.py` contiene la aplicación web utilizada para demostrar la vulnerabilidad, mientras que `ataque_sql_i.py` automatiza las pruebas de SQL Injection. Por su parte, `escaneo_red.py` permite comprobar el estado de determinados puertos del equipo local.
+El archivo `app_vulnerable.py` contiene la aplicación utilizada para demostrar la vulnerabilidad, mientras que `app_segura.py` corresponde a la versión protegida después de aplicar la mitigación. El archivo `ataque_sql_i.py` automatiza las pruebas de SQL Injection sobre la versión vulnerable y `pruebas_app_segura.py` permite comprobar el comportamiento de la aplicación después de implementar la protección. Por su parte, `escaneo_red.py` permite verificar el estado de determinados puertos del equipo local.
 
-La carpeta `templates` contiene el formulario de inicio de sesión, `static` almacena los estilos de la interfaz y `evidencias` reúne las capturas obtenidas durante el desarrollo y las pruebas.
+La carpeta `templates` contiene los formularios utilizados por ambas versiones de la aplicación, `static` almacena los estilos de la interfaz y `evidencias` reúne las capturas obtenidas durante el desarrollo y las diferentes pruebas realizadas.
 
 ## 4. Instalación de dependencias
 
@@ -50,7 +53,7 @@ Antes de iniciar la aplicación se deben instalar las bibliotecas utilizadas por
 python -m pip install flask requests
 ```
 
-Flask permite ejecutar la aplicación web, mientras que Requests es utilizado por el script encargado de automatizar las solicitudes realizadas durante las pruebas de seguridad.
+Flask permite ejecutar la aplicación web, mientras que Requests es utilizado por los scripts encargados de automatizar las solicitudes realizadas durante las pruebas de seguridad.
 
 ## 5. Ejecución de la aplicación vulnerable
 
@@ -157,21 +160,57 @@ El puerto `5000` fue identificado como abierto debido a que corresponde al servi
 
 ## 9. Mitigación de la vulnerabilidad
 
-**PENDIENTE DE INTEGRACIÓN**
+Después de comprobar el comportamiento de la aplicación vulnerable se incorporó una segunda versión mediante el archivo `app_segura.py`. Esta versión modifica la forma en que se realiza la consulta a la base de datos para evitar que los valores introducidos en el formulario sean interpretados como parte de una instrucción SQL.
 
+La mitigación utiliza una consulta parametrizada, de modo que el nombre de usuario y la contraseña son tratados como valores independientes de la sentencia SQL. Con este cambio, las entradas manipuladas utilizadas anteriormente para alterar la consulta dejan de modificar su estructura.
+
+![Código parametrizado de la versión segura](evidencias/Codigo_parametrizado_version_segura.png)
+
+Para iniciar la versión protegida se ejecuta desde la carpeta principal:
+
+```bash
+python app_segura.py
+```
+
+El servidor Flask correspondiente a esta versión se ejecuta localmente mediante el puerto `5001`. Una vez iniciado, el formulario puede abrirse en el navegador mediante:
+
+```text
+http://127.0.0.1:5001
+```
+
+![Formulario de la versión segura](evidencias/login_version_segura_.png)
+
+Para comprobar la mitigación también se incorporó el archivo `pruebas_app_segura.py`. Mientras `app_segura.py` permanece en ejecución, desde una segunda terminal se utiliza:
+
+```bash
+python pruebas_app_segura.py
+```
+
+La prueba automatizada comprobó cinco situaciones diferentes. El acceso mediante credenciales válidas fue permitido, mientras que una contraseña incorrecta fue rechazada. También se probaron tres intentos relacionados con SQL Injection: bypass mediante `OR 1=1`, omisión de contraseña e inyección introducida en el campo de contraseña. Los tres intentos fueron rechazados por la versión protegida.
+
+![Pruebas de la aplicación segura](evidencias/prueba_app_segura.png)
+
+![Prueba de inyección sobre la versión segura](evidencias/prueba_inyeccion_app_segura.png)
+
+![Resultado de la inyección sobre la versión segura](evidencias/resultado_inyeccion_app_segura.png)
+
+**Resultado obtenido:** la aplicación mantiene el acceso normal cuando las credenciales son válidas, pero los intentos de SQL Injection utilizados durante las pruebas no consiguen superar la autenticación.
 
 ## 10. Comparación de resultados
 
-Hasta este momento se han comprobado los siguientes resultados en la aplicación vulnerable:
+Las pruebas realizadas antes y después de aplicar la mitigación permiten observar el cambio producido en el mecanismo de autenticación.
 
 | Prueba | Versión vulnerable | Versión protegida |
 |---|---|---|
-| Credenciales válidas | Acceso concedido | Pendiente |
-| Credenciales incorrectas | Acceso denegado | Pendiente |
-| SQL Injection mediante bypass | Acceso concedido | Pendiente |
-| SQL Injection dirigido al usuario Andrea | Acceso concedido | Pendiente |
+| Credenciales válidas | Acceso concedido | Acceso concedido |
+| Credenciales incorrectas | Acceso denegado | Acceso denegado |
+| SQL Injection mediante bypass | Acceso concedido | Acceso denegado |
+| SQL Injection para omitir la contraseña | Vulnerable al bypass | Acceso denegado |
+| SQL Injection introducida en la contraseña | Vulnerable a entradas manipuladas | Acceso denegado |
 
-La columna correspondiente a la versión protegida se completará después de integrar y comprobar la mitigación.
+La comparación muestra que la aplicación continúa permitiendo el ingreso cuando se utilizan credenciales correctas y mantiene el rechazo de las credenciales convencionales incorrectas. La diferencia se encuentra en los intentos de SQL Injection: mientras la versión inicial permitió alterar el proceso normal de autenticación, las entradas manipuladas utilizadas durante las pruebas fueron rechazadas después de aplicar la consulta parametrizada.
+
+Los resultados obtenidos permiten comprobar que la medida implementada corrige la vulnerabilidad demostrada en el entorno de prueba y evita que las entradas SQL utilizadas durante la práctica sean interpretadas como parte de la consulta de autenticación.
 
 ## 11. Finalización del servidor
 
@@ -181,7 +220,7 @@ Cuando hayan concluido las pruebas, el servidor Flask puede detenerse desde la t
 Ctrl + C
 ```
 
-Al realizar esta acción se detiene la aplicación local y el puerto `5000` deja de mantenerse abierto por el servidor Flask.
+Al realizar esta acción se detiene la aplicación local y se libera el puerto utilizado por el servidor Flask, correspondiente al `5000` en la versión vulnerable o al `5001` en la versión protegida.
 
 ## 12. Consideraciones de uso
 

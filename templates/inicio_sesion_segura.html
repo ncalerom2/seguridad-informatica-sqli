@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laboratorio de Seguridad Informática - Versión Segura</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+
+<body>
+
+    <main class="contenedor">
+
+        <header class="encabezado">
+            <span class="etiqueta">PRÁCTICA ACADÉMICA</span>
+
+            <h1>Laboratorio de Seguridad Informática</h1>
+
+            <p>
+                Demostración controlada de una vulnerabilidad
+                de inyección SQL en un formulario de inicio de sesión.
+            </p>
+        </header>
+
+        <section class="tarjeta">
+
+            <h2>Inicio de sesión</h2>
+
+            <p class="descripcion">
+                Ingresa las credenciales de prueba para comprobar
+                el funcionamiento de la aplicación.
+            </p>
+
+            <form action="{{ url_for('inicio_seguro') }}" method="POST">
+
+                <label for="usuario">Nombre de usuario</label>
+
+                <input
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    maxlength="100"
+                    autocomplete="off"
+                    required
+                >
+
+                <label for="contrasena">Contraseña</label>
+
+                <div class="campo-contrasena">
+                    <input
+                        type="password"
+                        id="contrasena"
+                        name="contrasena"
+                        maxlength="100"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="alternarContrasena"
+                        class="boton-ojo"
+                        aria-label="Mostrar contraseña"
+                        aria-pressed="false"
+                        title="Mostrar contraseña"
+                    >
+                        👁️
+                    </button>
+                </div>
+
+                <button type="submit">Iniciar sesión</button>
+
+            </form>
+
+            {% if mensaje %}
+                <section class="resultado" aria-live="polite">
+                    <h3>Resultado de la prueba</h3>
+                    <p>{{ mensaje }}</p>
+                </section>
+            {% endif %}
+
+        </section>
+
+        <footer class="pie">
+            <p>Laboratorio académico. Pruebas realizadas exclusivamente en el entorno local.</p>
+        </footer>
+
+    </main>
+
+<script>
+    const campoContrasena = document.getElementById("contrasena");
+    const botonOjo = document.getElementById("alternarContrasena");
+
+    botonOjo.addEventListener("click", function () {
+        const estaOculta = campoContrasena.type === "password";
+
+        campoContrasena.type = estaOculta ? "text" : "password";
+
+        botonOjo.textContent = estaOculta ? "🙈" : "👁️";
+
+        botonOjo.setAttribute("aria-pressed", String(estaOculta));
+
+        botonOjo.setAttribute(
+            "aria-label",
+            estaOculta ? "Ocultar contraseña" : "Mostrar contraseña"
+        );
+
+        botonOjo.setAttribute(
+            "title",
+            estaOculta ? "Ocultar contraseña" : "Mostrar contraseña"
+        );
+    });
+</script>
+
+</body>
+</html>
