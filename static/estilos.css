@@ -1,0 +1,173 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px 16px;
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #253247;
+}
+
+.contenedor {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.encabezado {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.etiqueta {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #dceafe;
+    color: #174ea6;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.encabezado h1 {
+    margin: 18px 0 10px;
+    font-size: 30px;
+}
+
+.encabezado p {
+    line-height: 1.6;
+    color: #5c6879;
+}
+
+.tarjeta {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(30, 50, 80, 0.08);
+}
+
+.tarjeta h2 {
+    margin-top: 0;
+}
+
+.descripcion {
+    line-height: 1.6;
+    color: #647084;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd4df;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: 2px solid #b7d0ff;
+    border-color: #356ac3;
+}
+
+button {
+    margin-top: 15px;
+    padding: 13px;
+    border: none;
+    border-radius: 7px;
+    background: #2459a9;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #194582;
+}
+
+.resultado {
+    margin-top: 24px;
+    padding: 15px;
+    background: #edf4ff;
+    border-left: 4px solid #2459a9;
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+}
+
+.resultado h3 {
+    margin-top: 0;
+}
+
+.resultado p {
+    line-height: 1.5;
+}
+
+.pie {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: #687588;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 18px 12px;
+    }
+
+    .encabezado h1 {
+        font-size: 24px;
+    }
+
+    .tarjeta {
+        padding: 22px;
+    }
+}
+
+.campo-contrasena {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.campo-contrasena input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.boton-ojo {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #253247;
+    font-size: 19px;
+    border: none;
+    cursor: pointer;
+}
+
+.boton-ojo:hover {
+    background: #eef2f7;
+    border-radius: 5px;
+}
